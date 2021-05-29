@@ -297,7 +297,7 @@ public class piano implements ActionListener {
 	}
 		
 	
-	
+	//hi asdasd 
 	 public void MajorHighlight (int KeyChoice) {
 		 switch(KeyChoice) {
 			
