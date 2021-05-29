@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.swing.JFrame;
 
@@ -17,8 +18,29 @@ import java.awt.Color;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 
+import MajorScales.AFlatMajor;
+import MajorScales.AMajor;
+import MajorScales.BFlatMajor;
+import MajorScales.BMajor;
+import MajorScales.CFlatMajor;
+import MajorScales.CMajor;
+import MajorScales.CSharpMajor;
+import MajorScales.DFlatMajor;
+import MajorScales.DMajor;
+import MajorScales.EFlatMajor;
+import MajorScales.EMajor;
+import MajorScales.FMajor;
+import MajorScales.FSharpMajor;
+import MajorScales.GFlatMajor;
+import MajorScales.GMajor;
 
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+//finish cleaning up major key classes using CMajor as example
+//Make functino for intializing buttons in Piano Class
+
+
 
 public class piano implements ActionListener {
 	private Theory t;
@@ -54,9 +76,11 @@ public class piano implements ActionListener {
 	private JButton AB2;
 	
 	//Button Array
-	private JButton[] buttons;
-
+	private static JButton[] buttons;
+	private JButton[] buttons2;
 	
+	//hashmap
+	private static HashMap<String,JButton> allPianoKeys = new HashMap<String,JButton>();
 	
 	//Labels
 	private JLabel MajorTitle;
@@ -70,8 +94,22 @@ public class piano implements ActionListener {
 	//String Arrays
 	private String[] Keys = {"C", "G", "D", "A", "E", "B", "F#", "C#", "F", "Bb", "Eb", "Ab", "Db", "Gb", "Cb"};
 	
-
-	
+	//Major Scales
+	private CMajor Cmaj = new CMajor();
+	private GMajor Gmaj = new GMajor();
+	private DMajor Dmaj = new DMajor();
+	private AMajor Amaj = new AMajor();
+	private BMajor BMaj = new BMajor();
+	private EMajor Emaj = new EMajor();
+	private FSharpMajor FSmaj = new FSharpMajor();
+	private CSharpMajor CSmaj = new CSharpMajor();
+	private FMajor FMaj = new FMajor();
+	private BFlatMajor BFMaj = new BFlatMajor();
+	private EFlatMajor EFMaj = new EFlatMajor();
+	private AFlatMajor AFMaj = new AFlatMajor();
+	private DFlatMajor DFMaj = new DFlatMajor();
+	private GFlatMajor GFMaj = new GFlatMajor();
+	private CFlatMajor CFMaj = new CFlatMajor();
 	/**
 	 * Launch the application.
 	 */
@@ -108,131 +146,155 @@ public class piano implements ActionListener {
 		C1.setBounds(20, 233, 58, 231);
 		C1.addActionListener(this);
 		frame.getContentPane().add(C1);
+		allPianoKeys.put(C1.getText(), C1);
 		
 		D1 = new JButton("D1");
 		D1.setBounds(77, 233, 58, 231);
 		D1.addActionListener(this);
 		frame.getContentPane().add(D1);
+		allPianoKeys.put(D1.getText(), D1);
 		
 		E1 = new JButton("E1");
 		E1.setBounds(134, 233, 58, 231);
 		E1.addActionListener(this);
 		frame.getContentPane().add(E1);
+		allPianoKeys.put(E1.getText(), E1);
 		
 		F1 = new JButton("F1");
 		F1.setBounds(190, 233, 58, 231);
 		F1.addActionListener(this);
 		frame.getContentPane().add(F1);
+		allPianoKeys.put(F1.getText(), F1);
 		
 		G1 = new JButton("G1");
 		G1.setBounds(248, 233, 58, 231);
 		G1.addActionListener(this);
 		frame.getContentPane().add(G1);
+		allPianoKeys.put(G1.getText(), G1);
 		
 		A1 = new JButton("A1");
 		A1.setBounds(304, 233, 58, 231);
 		A1.addActionListener(this);
 		frame.getContentPane().add(A1);
+		allPianoKeys.put(A1.getText(), A1);
 		
 		B1 = new JButton("B1");
 		B1.setBounds(362, 233, 58, 231);
 		B1.addActionListener(this);
 		frame.getContentPane().add(B1);
+		allPianoKeys.put(B1.getText(), B1);
 		
 		C2 = new JButton("C2");
 		C2.setBounds(421, 233, 58, 231);
 		C2.addActionListener(this);
 		frame.getContentPane().add(C2);
+		allPianoKeys.put(C2.getText(), C2);
 		
 		D2 = new JButton("D2");
 		D2.setBounds(477, 233, 58, 231);
 		D2.addActionListener(this);
 		frame.getContentPane().add(D2);
+		allPianoKeys.put(D2.getText(), D2);
 		
 		E2 = new JButton("E2");
 		E2.setBounds(534, 233, 58, 231);
 		E2.addActionListener(this);
 		frame.getContentPane().add(E2);
+		allPianoKeys.put(E2.getText(), E2);
 		
 		F2 = new JButton("F2");
 		F2.setBounds(587, 233, 58, 231);
 		F2.addActionListener(this);
 		frame.getContentPane().add(F2);
+		allPianoKeys.put(F2.getText(), F2);
 		
 		G2 = new JButton("G2");
 		G2.setBounds(641, 233, 58, 231);
 		G2.addActionListener(this);
 		frame.getContentPane().add(G2);
+		allPianoKeys.put(G2.getText(), G2);
 		
 		A2 = new JButton("A2");
 		A2.setBounds(697, 233, 58, 231);
 		A2.addActionListener(this);
 		frame.getContentPane().add(A2);
+		allPianoKeys.put(A2.getText(), A2);
 		
 		B2 = new JButton("B2");
 		B2.setBounds(754, 233, 58, 231);
 		B2.addActionListener(this);
 		frame.getContentPane().add(B2);
+		allPianoKeys.put(B2.getText(), B2);
 		
 		CD1 = new JButton("C#/Db");
 		CD1.setFont(new Font("Tahoma", Font.PLAIN, 8));
 		CD1.setBounds(50, 43, 58, 192);
 		CD1.addActionListener(this);
 		frame.getContentPane().add(CD1);
+		allPianoKeys.put(CD1.getText(), CD1);
 		
 		DE1 = new JButton("D#/Eb");
 		DE1.setFont(new Font("Tahoma", Font.PLAIN, 8));
 		DE1.setBounds(107, 43, 58, 192);
 		DE1.addActionListener(this);
 		frame.getContentPane().add(DE1);
+		allPianoKeys.put(DE1.getText(), DE1);
 		
 		FG1 = new JButton("F#/Gb");
 		FG1.setFont(new Font("Tahoma", Font.PLAIN, 8));
 		FG1.setBounds(219, 43, 58, 192);
 		FG1.addActionListener(this);
 		frame.getContentPane().add(FG1);
+		allPianoKeys.put(FG1.getText(), FG1);
 		
 		GA1 = new JButton("G#/Ab");
 		GA1.setFont(new Font("Tahoma", Font.PLAIN, 8));
 		GA1.setBounds(277, 43, 58, 192);
 		GA1.addActionListener(this);
 		frame.getContentPane().add(GA1);
+		allPianoKeys.put(GA1.getText(), GA1);
 		
 		AB1 = new JButton("A#/Bb");
 		AB1.setFont(new Font("Tahoma", Font.PLAIN, 8));
 		AB1.setBounds(334, 43, 58, 192);
 		AB1.addActionListener(this);
 		frame.getContentPane().add(AB1);
+		allPianoKeys.put(AB1.getText(), AB1);
 		
-		CD2 = new JButton("C#/Db    2");
-		CD2.setFont(new Font("Tahoma", Font.PLAIN, 7));
+		CD2 = new JButton("C#/Db2");
+		CD2.setFont(new Font("Tahoma", Font.PLAIN, 8));
 		CD2.setBounds(448, 43, 58, 192);
 		CD2.addActionListener(this);
 		frame.getContentPane().add(CD2);
+		allPianoKeys.put(CD2.getText(), CD2);
 		
-		DE2 = new JButton("D#/Eb 2");
+		DE2 = new JButton("D#/Eb2");
 		DE2.setFont(new Font("Tahoma", Font.PLAIN, 8));
 		DE2.setBounds(504, 43, 58, 192);
 		DE2.addActionListener(this);
 		frame.getContentPane().add(DE2);
+		allPianoKeys.put(DE2.getText(), DE2);
 		
-		FG2 = new JButton("F#/Gb");
+		FG2 = new JButton("F#/Gb2");
 		FG2.setFont(new Font("Tahoma", Font.PLAIN, 8));
 		FG2.setBounds(615, 43, 58, 192);
 		FG2.addActionListener(this);
 		frame.getContentPane().add(FG2);
+		allPianoKeys.put(FG2.getText(), FG2);
 		
-		GA2 = new JButton("G#/Ab");
+		GA2 = new JButton("G#/Ab2");
 		GA2.setFont(new Font("Tahoma", Font.PLAIN, 8));
 		GA2.setBounds(672, 43, 58, 192);
 		GA2.addActionListener(this);
 		frame.getContentPane().add(GA2);
+		allPianoKeys.put(GA2.getText(), GA2);
 		
-		AB2 = new JButton("A#/Bb");
+		AB2 = new JButton("A#/Bb2");
 		AB2.setFont(new Font("Tahoma", Font.PLAIN, 8));
 		AB2.setBounds(731, 43, 58, 192);
 		AB2.addActionListener(this);
 		frame.getContentPane().add(AB2);
+		allPianoKeys.put(AB2.getText(), AB2);
 		
 		
 		SharpMajorScales = new JComboBox(Keys);
@@ -261,10 +323,6 @@ public class piano implements ActionListener {
 		//make scale class 
 		//make highlighter class 
 		//use dictionaries 
-		
-		
-		JButton[] temp =  {C1, D1, E1, F1, G1, A1, B1, C2, D2, E2, F2, G2, A2, B2, CD1, DE1, FG1, GA1, AB1, CD2, DE2, FG2, GA2, AB2};
-		buttons = temp;
 	}
 	
 	public void WhiteKeys() {
@@ -296,177 +354,75 @@ public class piano implements ActionListener {
 		AB2.setBackground(Color.gray);
 	}
 		
-	
-	//hi asdasd asdasd
+
 	 public void MajorHighlight (int KeyChoice) {
 		 switch(KeyChoice) {
 			
 			case 0: 
-				for (int i =0; i < 8; i++) {
-					//System.out.println(buttons[i]);
-					buttons[i].setBackground(Color.pink);
-				}
+				buttons = Cmaj.setScale(allPianoKeys);
 				break;
 			
 			case 1:
-				G1.setBackground(Color.PINK);
-				A1.setBackground(Color.PINK);
-				B1.setBackground(Color.PINK);
-				C2.setBackground(Color.PINK);
-				D2.setBackground(Color.PINK);
-				E2.setBackground(Color.PINK);
-				FG2.setBackground(Color.PINK);
-				G2.setBackground(Color.PINK);
+				buttons = Gmaj.setScale(buttons2);
 				break;
 			
 			case 2:
-				D1.setBackground(Color.PINK);
-				E1.setBackground(Color.PINK);
-				FG1.setBackground(Color.PINK);
-				G1.setBackground(Color.PINK);
-				A1.setBackground(Color.PINK);
-				B1.setBackground(Color.PINK);
-				CD2.setBackground(Color.PINK);
-				D2.setBackground(Color.PINK);
+				buttons = Dmaj.setScale(buttons2);
 				break;
 			
 			case 3:
-				A1.setBackground(Color.PINK);
-				B1.setBackground(Color.PINK);
-				CD2.setBackground(Color.PINK);
-				D2.setBackground(Color.PINK);
-				E2.setBackground(Color.PINK);
-				FG2.setBackground(Color.PINK);
-				GA2.setBackground(Color.PINK);
-				A2.setBackground(Color.PINK);
+				buttons = Amaj.setScale(buttons2);
 				break;
 			case 4:
-				E1.setBackground(Color.PINK);
-				FG1.setBackground(Color.PINK);
-				GA1.setBackground(Color.PINK);
-				A1.setBackground(Color.PINK);
-				B1.setBackground(Color.PINK);
-				CD2.setBackground(Color.PINK);
-				DE2.setBackground(Color.PINK);
-				E2.setBackground(Color.PINK);
+				buttons = Emaj.setScale(buttons2);
 				break;
 			//B Major
 			case 5:
-				B1.setBackground(Color.PINK);
-				CD2.setBackground(Color.PINK);
-				DE2.setBackground(Color.PINK);
-				E2.setBackground(Color.PINK);
-				FG2.setBackground(Color.PINK);
-				GA2.setBackground(Color.PINK);
-				AB2.setBackground(Color.PINK);
-				B2.setBackground(Color.PINK);
+				buttons = BMaj.setScale(buttons2);
 				break;
 			//F# major	
 			case 6:
-				FG1.setBackground(Color.PINK);
-				GA1.setBackground(Color.PINK);
-				AB1.setBackground(Color.PINK);
-				B1.setBackground(Color.PINK);
-				CD2.setBackground(Color.PINK);
-				DE2.setBackground(Color.PINK);
-				F2.setBackground(Color.PINK);
-				FG2.setBackground(Color.PINK);
+				buttons = FSmaj.setScale(buttons2);
 				break;
 				
 			//C# maj	
 			case 7:
-				CD1.setBackground(Color.PINK);
-				DE1.setBackground(Color.PINK);
-				F1.setBackground(Color.PINK);
-				FG1.setBackground(Color.PINK);
-				GA1.setBackground(Color.PINK);
-				AB1.setBackground(Color.PINK);
-				C2.setBackground(Color.PINK);
-				CD2.setBackground(Color.PINK);
+				buttons = CSmaj.setScale(buttons2);
 				break;
 				
 			//F major	
 			case 8:
-				F1.setBackground(Color.PINK);
-				G1.setBackground(Color.PINK);
-				A1.setBackground(Color.PINK);
-				AB1.setBackground(Color.PINK);
-				C2.setBackground(Color.PINK);
-				D2.setBackground(Color.PINK);
-				E2.setBackground(Color.PINK);
-				F2.setBackground(Color.PINK);
+				buttons = FMaj.setScale(buttons2);
 				break;
 				
 			//Bb major	
 			case 9:
-				AB1.setBackground(Color.PINK);
-				C2.setBackground(Color.PINK);
-				D2.setBackground(Color.PINK);
-				DE2.setBackground(Color.PINK);
-				F2.setBackground(Color.PINK);
-				G2.setBackground(Color.PINK);
-				A2.setBackground(Color.PINK);
-				AB2.setBackground(Color.PINK);
+				buttons = BFMaj.setScale(buttons2);
 				break;
 				
 			//Eb maj	
 			case 10:
-				DE1.setBackground(Color.PINK);
-				F1.setBackground(Color.PINK);
-				G1.setBackground(Color.PINK);
-				GA1.setBackground(Color.PINK);
-				AB1.setBackground(Color.PINK);
-				C2.setBackground(Color.PINK);
-				D2.setBackground(Color.PINK);
-				DE2.setBackground(Color.PINK);
+				buttons = EFMaj.setScale(buttons2);
 				break;
 				
 			//Ab maj	
 			case 11:
-				GA1.setBackground(Color.PINK);
-				AB1.setBackground(Color.PINK);
-				C2.setBackground(Color.PINK);
-				CD2.setBackground(Color.PINK);
-				DE2.setBackground(Color.PINK);
-				F2.setBackground(Color.PINK);
-				G2.setBackground(Color.PINK);
-				GA2.setBackground(Color.PINK);
+				buttons = AFMaj.setScale(buttons2);
 				break;
 				
 			//Db	
 			case 12:
-				CD1.setBackground(Color.PINK);
-				DE1.setBackground(Color.PINK);
-				F1.setBackground(Color.PINK);
-				FG1.setBackground(Color.PINK);
-				GA1.setBackground(Color.PINK);
-				AB1.setBackground(Color.PINK);
-				C2.setBackground(Color.PINK);
-				CD2.setBackground(Color.PINK);
+				buttons = DFMaj.setScale(buttons2);
 				break;
 				
 			//Gb 
 			case 13:
-				FG1.setBackground(Color.PINK);
-				GA1.setBackground(Color.PINK);
-				AB1.setBackground(Color.PINK);
-				B1.setBackground(Color.PINK);
-				CD2.setBackground(Color.PINK);
-				DE2.setBackground(Color.PINK);
-				F2.setBackground(Color.PINK);
-				FG2.setBackground(Color.PINK);
+				buttons = GFMaj.setScale(buttons2);
 				break;
 				
 			//Cb	
 			case 14:
-				B1.setBackground(Color.PINK);
-				CD2.setBackground(Color.PINK);
-				DE2.setBackground(Color.PINK);
-				E2.setBackground(Color.PINK);
-				FG2.setBackground(Color.PINK);
-				GA2.setBackground(Color.PINK);
-				AB2.setBackground(Color.PINK);
-				B2.setBackground(Color.PINK);
+				buttons = CFMaj.setScale(buttons2);
 				break;
 			}
 		 
@@ -491,7 +447,6 @@ public class piano implements ActionListener {
 					clip.start();
 				}
 				 catch (Exception e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 		}
@@ -504,7 +459,6 @@ public class piano implements ActionListener {
 				clip.start();
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -517,7 +471,6 @@ public class piano implements ActionListener {
 				clip.start();
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -530,7 +483,6 @@ public class piano implements ActionListener {
 				clip.start();
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -543,7 +495,6 @@ public class piano implements ActionListener {
 				clip.start();
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -556,7 +507,6 @@ public class piano implements ActionListener {
 				clip.start();
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -569,7 +519,6 @@ public class piano implements ActionListener {
 				clip.start();
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -582,7 +531,6 @@ public class piano implements ActionListener {
 				clip.start();
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -595,7 +543,6 @@ public class piano implements ActionListener {
 				clip.start();
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -608,7 +555,6 @@ public class piano implements ActionListener {
 				clip.start();
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -621,7 +567,6 @@ public class piano implements ActionListener {
 				clip.start();
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -634,7 +579,6 @@ public class piano implements ActionListener {
 				clip.start();
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -647,7 +591,6 @@ public class piano implements ActionListener {
 				clip.start();
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -660,7 +603,6 @@ public class piano implements ActionListener {
 				clip.start();
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -673,7 +615,6 @@ public class piano implements ActionListener {
 				clip.start();
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -686,7 +627,6 @@ public class piano implements ActionListener {
 				clip.start();
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -699,7 +639,6 @@ public class piano implements ActionListener {
 				clip.start();
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -711,8 +650,7 @@ public class piano implements ActionListener {
 				clip.open(aIS);
 				clip.start();
 			}
-			 catch (Exception e1) {
-				// TODO Auto-generated catch block
+			 catch (Exception e1) {			
 				e1.printStackTrace();
 			}
 		}
@@ -725,7 +663,6 @@ public class piano implements ActionListener {
 				clip.start();
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -738,7 +675,6 @@ public class piano implements ActionListener {
 				clip.start();
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -751,7 +687,6 @@ public class piano implements ActionListener {
 				clip.start();
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -764,7 +699,6 @@ public class piano implements ActionListener {
 				clip.start();
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -777,7 +711,6 @@ public class piano implements ActionListener {
 				clip.start();
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -790,15 +723,9 @@ public class piano implements ActionListener {
 				clip.start();
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-		}
-		
-		
-			
-			
+		}		
 	}
-		// TODO Auto-generated method stub
 }
 
