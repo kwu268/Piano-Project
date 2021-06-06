@@ -3,11 +3,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.swing.JFrame;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -16,61 +20,61 @@ import java.awt.Font;
 import java.awt.Color;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
-
+import MajorScales.MajorFactory;
+import MajorScales.PianoNote;
 
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
-public class piano implements ActionListener {
-	private Theory t;
-	private JFrame frame;
-	//White Buttons
-	private JButton C1;
-	private JButton D1;
-	private JButton E1;
-	private JButton F1;
-	private JButton G1;
-	private JButton A1;
-	private JButton B1;
-	private JButton C2;
-	private JButton D2;
-	private JButton E2;
-	private JButton F2;
-	private JButton G2;
-	private JButton A2;
-	private JButton B2;
-	
+
+
+//Done:
+//Finsihed cleaning major key classes, added makeButton() function, 
+// and remade WhiteKeys() function
+//Change object allPianoKeys to use the PianoNote object
+//Change all instances of allPianoKeys to use PianoNote object
+//Adjust the offset for the piano keys
+//change hasmap to pianoNote class 
+//make Factory 
+//Change Class Names to Capitalized
+//Clean up Clear Button code
+
+//TODO:
+//Clean up unused variables and comments
+
+
+
+
+
+//make note class containing audio and bounds and Jbutton properties 
+public class Piano implements ActionListener {
+	protected static final String TEST = null;
+	private JFrame frame;	
 	private JButton Clear;
-	
-	//Black Buttons 
-	private JButton CD1;
-	private JButton DE1;
-	private JButton FG1;
-	private JButton GA1;
-	private JButton AB1;
-	private JButton CD2;
-	private JButton DE2;
-	private JButton FG2;
-	private JButton GA2;
-	private JButton AB2;
-	
 	//Button Array
-	private JButton[] buttons;
-
-	
-	
+	private static JButton[] HighlightedButtons;	
+	private static PianoNote[] createdButtons = new PianoNote[24];
+	//hashmap
+	private static HashMap<String,PianoNote> allPianoKeys = new HashMap<String,PianoNote>();
 	//Labels
 	private JLabel MajorTitle;
-	private JLabel Sharps;
-	private JLabel Flats;
-	
+	private JLabel Sharps;	
 	//Combo Boxes
 	private JComboBox<String> SharpMajorScales;
-
-	
 	//String Arrays
 	private String[] Keys = {"C", "G", "D", "A", "E", "B", "F#", "C#", "F", "Bb", "Eb", "Ab", "Db", "Gb", "Cb"};
-	
-
+	private final String[] WHITE_KEYS = {"C1", "D1", "E1", "F1", "G1", "A1", "B1", "C2", "D2", "E2", "F2", "G2", "A2", "B2" };
+	private final String[] BLACK_KEYS = {"C# Db1","D# Eb1", "F# Gb1", "G# Ab1", "A# Bb1", "C# Db2", "D# Eb2", "F# Gb2", "G# Ab2", "A# Bb2" };
+	//Boundary numbers white keys
+	private final int OFFSET = 40;
+	private final int KEY_WIDTH = 77;
+	private final int WHITE_KEY_WIDTH = 78;
+	private final int WHITE_KEY_HEIGHT = 231;
+	private final int WHITE_KEY_Y =	233;
+	//Boundary numbers black keys
+	private final int BLACK_KEY_HEIGHT = 192;
+	private final int BLACK_KEY_Y =	41;
+	private final String BASE_AUDIO_PATH = "C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\";
 	
 	/**
 	 * Launch the application.
@@ -79,7 +83,7 @@ public class piano implements ActionListener {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					piano window = new piano();
+					Piano window = new Piano();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -88,393 +92,161 @@ public class piano implements ActionListener {
 		});
 	}
 
-	/**
-	 * Create the application.
-	 */
-	public piano() {
+
+	public Piano() {
 		initialize();
 	}
 
-	/**
-	 * Initialize the contents of the frame.
-	 */
+	private void createBlackButtons() {
+		int noteValue = -5;
+		int leftover = 14;
+		for (int i = 0; i < BLACK_KEYS.length; i++) {
+			if ( BLACK_KEYS[i].charAt(0) == 'C' || BLACK_KEYS[i].charAt(0) == 'F') {
+				noteValue += KEY_WIDTH *2;
+			}
+			else {
+				noteValue += KEY_WIDTH;
+			}
+			PianoNote currentNote = new PianoNote(BLACK_KEYS[i], noteValue, BLACK_KEY_Y, WHITE_KEY_WIDTH, BLACK_KEY_HEIGHT, (BASE_AUDIO_PATH + BLACK_KEYS[i] + ".wav"));
+			createdButtons[leftover + i] = currentNote;
+		}	
+	}
+	
+	private void createWhiteButtons() {
+		int noteValue = OFFSET;	
+		for (int i = 0; i < WHITE_KEYS.length; i++) {
+			noteValue += KEY_WIDTH; 
+			PianoNote currentNote = new PianoNote(WHITE_KEYS[i], noteValue, WHITE_KEY_Y, WHITE_KEY_WIDTH, WHITE_KEY_HEIGHT, BASE_AUDIO_PATH + WHITE_KEYS[i] + ".wav"); 
+			createdButtons[i] = currentNote; 
+		}	
+	}
+	
+	//adds action listener to buttons and adds buttons the frame
+	private void setupButtons() {	
+		for (int i = 0; i < createdButtons.length; i++) {
+			String noteName = createdButtons[i].getNoteName();
+			JButton currentButton = createdButtons[i].getButton();		
+			currentButton.addActionListener(this);
+			frame.getContentPane().add(currentButton);
+			allPianoKeys.put(noteName, createdButtons[i]); 
+		}
+	}
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 1086, 503);
+		frame.setBounds(100, 100, 1500, 550);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
-		C1 = new JButton("C1");
-		C1.setBounds(20, 233, 58, 231);
-		C1.addActionListener(this);
-		frame.getContentPane().add(C1);
+		createWhiteButtons();
+		createBlackButtons();
+		setupButtons();
 		
-		D1 = new JButton("D1");
-		D1.setBounds(77, 233, 58, 231);
-		D1.addActionListener(this);
-		frame.getContentPane().add(D1);
-		
-		E1 = new JButton("E1");
-		E1.setBounds(134, 233, 58, 231);
-		E1.addActionListener(this);
-		frame.getContentPane().add(E1);
-		
-		F1 = new JButton("F1");
-		F1.setBounds(190, 233, 58, 231);
-		F1.addActionListener(this);
-		frame.getContentPane().add(F1);
-		
-		G1 = new JButton("G1");
-		G1.setBounds(248, 233, 58, 231);
-		G1.addActionListener(this);
-		frame.getContentPane().add(G1);
-		
-		A1 = new JButton("A1");
-		A1.setBounds(304, 233, 58, 231);
-		A1.addActionListener(this);
-		frame.getContentPane().add(A1);
-		
-		B1 = new JButton("B1");
-		B1.setBounds(362, 233, 58, 231);
-		B1.addActionListener(this);
-		frame.getContentPane().add(B1);
-		
-		C2 = new JButton("C2");
-		C2.setBounds(421, 233, 58, 231);
-		C2.addActionListener(this);
-		frame.getContentPane().add(C2);
-		
-		D2 = new JButton("D2");
-		D2.setBounds(477, 233, 58, 231);
-		D2.addActionListener(this);
-		frame.getContentPane().add(D2);
-		
-		E2 = new JButton("E2");
-		E2.setBounds(534, 233, 58, 231);
-		E2.addActionListener(this);
-		frame.getContentPane().add(E2);
-		
-		F2 = new JButton("F2");
-		F2.setBounds(587, 233, 58, 231);
-		F2.addActionListener(this);
-		frame.getContentPane().add(F2);
-		
-		G2 = new JButton("G2");
-		G2.setBounds(641, 233, 58, 231);
-		G2.addActionListener(this);
-		frame.getContentPane().add(G2);
-		
-		A2 = new JButton("A2");
-		A2.setBounds(697, 233, 58, 231);
-		A2.addActionListener(this);
-		frame.getContentPane().add(A2);
-		
-		B2 = new JButton("B2");
-		B2.setBounds(754, 233, 58, 231);
-		B2.addActionListener(this);
-		frame.getContentPane().add(B2);
-		
-		CD1 = new JButton("C#/Db");
-		CD1.setFont(new Font("Tahoma", Font.PLAIN, 8));
-		CD1.setBounds(50, 43, 58, 192);
-		CD1.addActionListener(this);
-		frame.getContentPane().add(CD1);
-		
-		DE1 = new JButton("D#/Eb");
-		DE1.setFont(new Font("Tahoma", Font.PLAIN, 8));
-		DE1.setBounds(107, 43, 58, 192);
-		DE1.addActionListener(this);
-		frame.getContentPane().add(DE1);
-		
-		FG1 = new JButton("F#/Gb");
-		FG1.setFont(new Font("Tahoma", Font.PLAIN, 8));
-		FG1.setBounds(219, 43, 58, 192);
-		FG1.addActionListener(this);
-		frame.getContentPane().add(FG1);
-		
-		GA1 = new JButton("G#/Ab");
-		GA1.setFont(new Font("Tahoma", Font.PLAIN, 8));
-		GA1.setBounds(277, 43, 58, 192);
-		GA1.addActionListener(this);
-		frame.getContentPane().add(GA1);
-		
-		AB1 = new JButton("A#/Bb");
-		AB1.setFont(new Font("Tahoma", Font.PLAIN, 8));
-		AB1.setBounds(334, 43, 58, 192);
-		AB1.addActionListener(this);
-		frame.getContentPane().add(AB1);
-		
-		CD2 = new JButton("C#/Db    2");
-		CD2.setFont(new Font("Tahoma", Font.PLAIN, 7));
-		CD2.setBounds(448, 43, 58, 192);
-		CD2.addActionListener(this);
-		frame.getContentPane().add(CD2);
-		
-		DE2 = new JButton("D#/Eb 2");
-		DE2.setFont(new Font("Tahoma", Font.PLAIN, 8));
-		DE2.setBounds(504, 43, 58, 192);
-		DE2.addActionListener(this);
-		frame.getContentPane().add(DE2);
-		
-		FG2 = new JButton("F#/Gb");
-		FG2.setFont(new Font("Tahoma", Font.PLAIN, 8));
-		FG2.setBounds(615, 43, 58, 192);
-		FG2.addActionListener(this);
-		frame.getContentPane().add(FG2);
-		
-		GA2 = new JButton("G#/Ab");
-		GA2.setFont(new Font("Tahoma", Font.PLAIN, 8));
-		GA2.setBounds(672, 43, 58, 192);
-		GA2.addActionListener(this);
-		frame.getContentPane().add(GA2);
-		
-		AB2 = new JButton("A#/Bb");
-		AB2.setFont(new Font("Tahoma", Font.PLAIN, 8));
-		AB2.setBounds(731, 43, 58, 192);
-		AB2.addActionListener(this);
-		frame.getContentPane().add(AB2);
-		
-		
-		SharpMajorScales = new JComboBox(Keys);
-		SharpMajorScales.setBounds(981, 39, 46, 22);
+		SharpMajorScales = new JComboBox<String>(Keys);
+		SharpMajorScales.setBounds(1300, 39, 46, 22);
 		SharpMajorScales.addActionListener(this);
 		frame.getContentPane().add(SharpMajorScales);
 		
-		
 		Sharps = new JLabel("Keys:");
-		Sharps.setBounds(936, 43, 46, 14);
+		Sharps.setBounds(1250, 43, 46, 14);
 		frame.getContentPane().add(Sharps);
 		
 		MajorTitle = new JLabel("Major Scale Keys");
 		MajorTitle.setFont(new Font("Tahoma", Font.BOLD, 11));
-		MajorTitle.setBounds(939, 14, 106, 14);
+		MajorTitle.setBounds(1250, 14, 106, 14);
 		frame.getContentPane().add(MajorTitle);
 		
 		Clear = new JButton("Clear Highlights");
-		Clear.setBounds(914, 430, 146, 23);
+		Clear.setBounds(1250, 430, 146, 23);
+		Clear.setBackground(Color.green);
+		frame.add(Clear);
 		Clear.addActionListener(this);
-		Clear.setBackground(Color.GREEN);
-		frame.getContentPane().add(Clear);
 		
 		WhiteKeys();
-		
-		//make scale class 
-		//make highlighter class 
-		//use dictionaries 
-		
-		
-		JButton[] temp =  {C1, D1, E1, F1, G1, A1, B1, C2, D2, E2, F2, G2, A2, B2, CD1, DE1, FG1, GA1, AB1, CD2, DE2, FG2, GA2, AB2};
-		buttons = temp;
+	
 	}
 	
 	public void WhiteKeys() {
-		C1.setBackground(Color.white);
-		D1.setBackground(Color.white);
-        E1.setBackground(Color.white);
-		F1.setBackground(Color.white);
-		G1.setBackground(Color.white);
-		A1.setBackground(Color.white);
-		B1.setBackground(Color.white);
-		C2.setBackground(Color.white);
-		D2.setBackground(Color.white);
-		E2.setBackground(Color.white);
-	    F2.setBackground(Color.white);
-		G2.setBackground(Color.white);
-		A2.setBackground(Color.white);
-		B2.setBackground(Color.white);
-		
-		//Black Buttons 
-		CD1.setBackground(Color.gray);
-		DE1.setBackground(Color.gray);
-		FG1.setBackground(Color.gray);
-		GA1.setBackground(Color.gray);
-		AB1.setBackground(Color.gray);
-		CD2.setBackground(Color.gray);
-		DE2.setBackground(Color.gray);
-		FG2.setBackground(Color.gray);
-		GA2.setBackground(Color.gray);
-		AB2.setBackground(Color.gray);
+		for (Map.Entry<String,PianoNote> note : allPianoKeys.entrySet()) {
+			if (note.getValue().getNoteName().length() > 2) note.getValue().getButton().setBackground(Color.gray);
+			else note.getValue().getButton().setBackground(Color.white);
+		}	
 	}
 		
-	
-	//hi asdasd asdasd
-	 public void MajorHighlight (int KeyChoice) {
-		 switch(KeyChoice) {
-			
+	public void MajorHighlight (int KeyChoice) {
+		WhiteKeys();
+		MajorFactory ScaleFactory = new MajorFactory(allPianoKeys);
+		switch(KeyChoice) {			
 			case 0: 
-				for (int i =0; i < 8; i++) {
-					//System.out.println(buttons[i]);
-					buttons[i].setBackground(Color.pink);
-				}
+				HighlightedButtons = ScaleFactory.getMajor("C");			
 				break;
-			
 			case 1:
-				G1.setBackground(Color.PINK);
-				A1.setBackground(Color.PINK);
-				B1.setBackground(Color.PINK);
-				C2.setBackground(Color.PINK);
-				D2.setBackground(Color.PINK);
-				E2.setBackground(Color.PINK);
-				FG2.setBackground(Color.PINK);
-				G2.setBackground(Color.PINK);
-				break;
-			
+				HighlightedButtons = ScaleFactory.getMajor("G");
+				break;		
 			case 2:
-				D1.setBackground(Color.PINK);
-				E1.setBackground(Color.PINK);
-				FG1.setBackground(Color.PINK);
-				G1.setBackground(Color.PINK);
-				A1.setBackground(Color.PINK);
-				B1.setBackground(Color.PINK);
-				CD2.setBackground(Color.PINK);
-				D2.setBackground(Color.PINK);
+				HighlightedButtons = ScaleFactory.getMajor("D");
 				break;
 			
 			case 3:
-				A1.setBackground(Color.PINK);
-				B1.setBackground(Color.PINK);
-				CD2.setBackground(Color.PINK);
-				D2.setBackground(Color.PINK);
-				E2.setBackground(Color.PINK);
-				FG2.setBackground(Color.PINK);
-				GA2.setBackground(Color.PINK);
-				A2.setBackground(Color.PINK);
+				HighlightedButtons = ScaleFactory.getMajor("A");
 				break;
 			case 4:
-				E1.setBackground(Color.PINK);
-				FG1.setBackground(Color.PINK);
-				GA1.setBackground(Color.PINK);
-				A1.setBackground(Color.PINK);
-				B1.setBackground(Color.PINK);
-				CD2.setBackground(Color.PINK);
-				DE2.setBackground(Color.PINK);
-				E2.setBackground(Color.PINK);
+				HighlightedButtons = ScaleFactory.getMajor("E");
 				break;
 			//B Major
 			case 5:
-				B1.setBackground(Color.PINK);
-				CD2.setBackground(Color.PINK);
-				DE2.setBackground(Color.PINK);
-				E2.setBackground(Color.PINK);
-				FG2.setBackground(Color.PINK);
-				GA2.setBackground(Color.PINK);
-				AB2.setBackground(Color.PINK);
-				B2.setBackground(Color.PINK);
+				HighlightedButtons = ScaleFactory.getMajor("B");
 				break;
 			//F# major	
 			case 6:
-				FG1.setBackground(Color.PINK);
-				GA1.setBackground(Color.PINK);
-				AB1.setBackground(Color.PINK);
-				B1.setBackground(Color.PINK);
-				CD2.setBackground(Color.PINK);
-				DE2.setBackground(Color.PINK);
-				F2.setBackground(Color.PINK);
-				FG2.setBackground(Color.PINK);
-				break;
-				
+				HighlightedButtons = ScaleFactory.getMajor("F#");
+				break;			
 			//C# maj	
 			case 7:
-				CD1.setBackground(Color.PINK);
-				DE1.setBackground(Color.PINK);
-				F1.setBackground(Color.PINK);
-				FG1.setBackground(Color.PINK);
-				GA1.setBackground(Color.PINK);
-				AB1.setBackground(Color.PINK);
-				C2.setBackground(Color.PINK);
-				CD2.setBackground(Color.PINK);
-				break;
-				
+				HighlightedButtons = ScaleFactory.getMajor("C#");
+				break;			
 			//F major	
 			case 8:
-				F1.setBackground(Color.PINK);
-				G1.setBackground(Color.PINK);
-				A1.setBackground(Color.PINK);
-				AB1.setBackground(Color.PINK);
-				C2.setBackground(Color.PINK);
-				D2.setBackground(Color.PINK);
-				E2.setBackground(Color.PINK);
-				F2.setBackground(Color.PINK);
-				break;
-				
+				HighlightedButtons = ScaleFactory.getMajor("F");
+				break;				
 			//Bb major	
 			case 9:
-				AB1.setBackground(Color.PINK);
-				C2.setBackground(Color.PINK);
-				D2.setBackground(Color.PINK);
-				DE2.setBackground(Color.PINK);
-				F2.setBackground(Color.PINK);
-				G2.setBackground(Color.PINK);
-				A2.setBackground(Color.PINK);
-				AB2.setBackground(Color.PINK);
-				break;
-				
+				HighlightedButtons = ScaleFactory.getMajor("Bb");
+				break;				
 			//Eb maj	
 			case 10:
-				DE1.setBackground(Color.PINK);
-				F1.setBackground(Color.PINK);
-				G1.setBackground(Color.PINK);
-				GA1.setBackground(Color.PINK);
-				AB1.setBackground(Color.PINK);
-				C2.setBackground(Color.PINK);
-				D2.setBackground(Color.PINK);
-				DE2.setBackground(Color.PINK);
-				break;
-				
+				HighlightedButtons = ScaleFactory.getMajor("Eb");
+				break;				
 			//Ab maj	
 			case 11:
-				GA1.setBackground(Color.PINK);
-				AB1.setBackground(Color.PINK);
-				C2.setBackground(Color.PINK);
-				CD2.setBackground(Color.PINK);
-				DE2.setBackground(Color.PINK);
-				F2.setBackground(Color.PINK);
-				G2.setBackground(Color.PINK);
-				GA2.setBackground(Color.PINK);
-				break;
-				
+				HighlightedButtons = ScaleFactory.getMajor("Ab");
+				break;			
 			//Db	
 			case 12:
-				CD1.setBackground(Color.PINK);
-				DE1.setBackground(Color.PINK);
-				F1.setBackground(Color.PINK);
-				FG1.setBackground(Color.PINK);
-				GA1.setBackground(Color.PINK);
-				AB1.setBackground(Color.PINK);
-				C2.setBackground(Color.PINK);
-				CD2.setBackground(Color.PINK);
-				break;
-				
+				HighlightedButtons = ScaleFactory.getMajor("Db");
+				break;				
 			//Gb 
 			case 13:
-				FG1.setBackground(Color.PINK);
-				GA1.setBackground(Color.PINK);
-				AB1.setBackground(Color.PINK);
-				B1.setBackground(Color.PINK);
-				CD2.setBackground(Color.PINK);
-				DE2.setBackground(Color.PINK);
-				F2.setBackground(Color.PINK);
-				FG2.setBackground(Color.PINK);
+				HighlightedButtons = ScaleFactory.getMajor("Gb");
 				break;
-				
 			//Cb	
 			case 14:
-				B1.setBackground(Color.PINK);
-				CD2.setBackground(Color.PINK);
-				DE2.setBackground(Color.PINK);
-				E2.setBackground(Color.PINK);
-				FG2.setBackground(Color.PINK);
-				GA2.setBackground(Color.PINK);
-				AB2.setBackground(Color.PINK);
-				B2.setBackground(Color.PINK);
+				HighlightedButtons = ScaleFactory.getMajor("Cb");
 				break;
 			}
 		 
 	 }
+	 
+	public AudioInputStream makeAudio(String location) throws Exception {	 
+		AudioInputStream aIS = AudioSystem.getAudioInputStream(new File(location));
+		Clip clip = AudioSystem.getClip();
+		clip.open(aIS);
+		clip.start();
+		return aIS;
+	 }
+	 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == SharpMajorScales) {
-			WhiteKeys();			
+		if (e.getSource() == SharpMajorScales) {			
 			int KeyChoice = SharpMajorScales.getSelectedIndex();
 			MajorHighlight(KeyChoice);
 		
@@ -483,322 +255,221 @@ public class piano implements ActionListener {
 			WhiteKeys();
 		}
 		
-		else if (e.getSource() == C1) {
+		else if (e.getSource() == allPianoKeys.get("C1").getButton()) {
 				try {
-					AudioInputStream aIS = AudioSystem.getAudioInputStream(new File("C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\c3.wav"));
-					Clip clip = AudioSystem.getClip();
-					clip.open(aIS);
-					clip.start();
+					AudioInputStream aIS = makeAudio(allPianoKeys.get("C1").getAudioPath());
 				}
 				 catch (Exception e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 		}
 		
-		else if (e.getSource() == D1) {
+		else if (e.getSource() == allPianoKeys.get("D1").getButton()) {
 			try {
-				AudioInputStream aIS = AudioSystem.getAudioInputStream(new File("C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\(3) d3.wav"));
-				Clip clip = AudioSystem.getClip();
-				clip.open(aIS);
-				clip.start();
+				AudioInputStream aIS = makeAudio(allPianoKeys.get("D1").getAudioPath());
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		
-		else if (e.getSource() == E1) {
+		else if (e.getSource() == allPianoKeys.get("E1").getButton()) {
 			try {
-				AudioInputStream aIS = AudioSystem.getAudioInputStream(new File("C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\(5) e3.wav"));
-				Clip clip = AudioSystem.getClip();
-				clip.open(aIS);
-				clip.start();
+				AudioInputStream aIS = makeAudio(allPianoKeys.get("E1").getAudioPath());
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		
-		else if (e.getSource() == F1) {
+		else if (e.getSource() == allPianoKeys.get("F1").getButton()) {
 			try {
-				AudioInputStream aIS = AudioSystem.getAudioInputStream(new File("C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\(6) f3.wav"));
-				Clip clip = AudioSystem.getClip();
-				clip.open(aIS);
-				clip.start();
+				AudioInputStream aIS = makeAudio(allPianoKeys.get("F1").getAudioPath());
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		
-		else if (e.getSource() == G1) {
+		else if (e.getSource() == allPianoKeys.get("G1").getButton()) {
 			try {
-				AudioInputStream aIS = AudioSystem.getAudioInputStream(new File("C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\(8) g3.wav"));
-				Clip clip = AudioSystem.getClip();
-				clip.open(aIS);
-				clip.start();
+				AudioInputStream aIS = makeAudio(allPianoKeys.get("G1").getAudioPath());
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		
-		else if (e.getSource() == A1) {
+		else if (e.getSource() == allPianoKeys.get("A1").getButton()) {
 			try {
-				AudioInputStream aIS = AudioSystem.getAudioInputStream(new File("C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\(22) a4.wav"));
-				Clip clip = AudioSystem.getClip();
-				clip.open(aIS);
-				clip.start();
+				AudioInputStream aIS = makeAudio(allPianoKeys.get("A1").getAudioPath());
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		
-		else if (e.getSource() == B1) {
+		else if (e.getSource() == allPianoKeys.get("B1").getButton()) {
 			try {
-				AudioInputStream aIS = AudioSystem.getAudioInputStream(new File("C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\(24)b4.wav"));
-				Clip clip = AudioSystem.getClip();
-				clip.open(aIS);
-				clip.start();
+				AudioInputStream aIS = makeAudio(allPianoKeys.get("B1").getAudioPath());
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		
-		else if (e.getSource() == C2) {
+		else if (e.getSource() == allPianoKeys.get("C2").getButton()) {
 			try {
-				AudioInputStream aIS = AudioSystem.getAudioInputStream(new File("C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\(13)c4.wav"));
-				Clip clip = AudioSystem.getClip();
-				clip.open(aIS);
-				clip.start();
+				AudioInputStream aIS = makeAudio(allPianoKeys.get("C2").getAudioPath());
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		
-		else if (e.getSource() == D2) {
+		else if (e.getSource() == allPianoKeys.get("D2").getButton()) {
 			try {
-				AudioInputStream aIS = AudioSystem.getAudioInputStream(new File("C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\(15) d4.wav"));
-				Clip clip = AudioSystem.getClip();
-				clip.open(aIS);
-				clip.start();
+				AudioInputStream aIS = makeAudio(allPianoKeys.get("D2").getAudioPath());
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		
-		else if (e.getSource() == E2) {
+		else if (e.getSource() == allPianoKeys.get("E2").getButton()) {
 			try {
-				AudioInputStream aIS = AudioSystem.getAudioInputStream(new File("C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\(17) e4.wav"));
-				Clip clip = AudioSystem.getClip();
-				clip.open(aIS);
-				clip.start();
+				AudioInputStream aIS = makeAudio(allPianoKeys.get("E2").getAudioPath());
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		
-		else if (e.getSource() == F2) {
+		else if (e.getSource() == allPianoKeys.get("F2").getButton()) {
 			try {
-				AudioInputStream aIS = AudioSystem.getAudioInputStream(new File("C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\(18) f4.wav"));
-				Clip clip = AudioSystem.getClip();
-				clip.open(aIS);
-				clip.start();
+				AudioInputStream aIS = makeAudio(allPianoKeys.get("F2").getAudioPath());
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		
-		else if (e.getSource() == G2) {
+		else if (e.getSource() == allPianoKeys.get("G2").getButton()) {
 			try {
-				AudioInputStream aIS = AudioSystem.getAudioInputStream(new File("C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\(20) g4.wav"));
-				Clip clip = AudioSystem.getClip();
-				clip.open(aIS);
-				clip.start();
+				AudioInputStream aIS = makeAudio(allPianoKeys.get("G2").getAudioPath());
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		
-		else if (e.getSource() == A2) {
+		else if (e.getSource() == allPianoKeys.get("A2").getButton()) {
 			try {
-				AudioInputStream aIS = AudioSystem.getAudioInputStream(new File("C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\a5.wav"));
-				Clip clip = AudioSystem.getClip();
-				clip.open(aIS);
-				clip.start();
+				AudioInputStream aIS = makeAudio(allPianoKeys.get("A2").getAudioPath());
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		
-		else if (e.getSource() == B2) {
+		else if (e.getSource() == allPianoKeys.get("B2").getButton()) {
 			try {
-				AudioInputStream aIS = AudioSystem.getAudioInputStream(new File("C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\b5.wav"));
-				Clip clip = AudioSystem.getClip();
-				clip.open(aIS);
-				clip.start();
+				AudioInputStream aIS = makeAudio(allPianoKeys.get("B2").getAudioPath());
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		
-		else if (e.getSource() == CD1) {
+		else if (e.getSource() == allPianoKeys.get("C# Db1").getButton()) {
 			try {
-				AudioInputStream aIS = AudioSystem.getAudioInputStream(new File("C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\(2) c-3.wav"));
-				Clip clip = AudioSystem.getClip();
-				clip.open(aIS);
-				clip.start();
+				AudioInputStream aIS = makeAudio(allPianoKeys.get("C# Db1").getAudioPath());
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		
-		else if (e.getSource() == DE1) {
+		else if (e.getSource() == allPianoKeys.get("D# Eb1").getButton()) {
 			try {
-				AudioInputStream aIS = AudioSystem.getAudioInputStream(new File("C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\(4) d-3.wav"));
-				Clip clip = AudioSystem.getClip();
-				clip.open(aIS);
-				clip.start();
+				AudioInputStream aIS = makeAudio(allPianoKeys.get("D# Eb1").getAudioPath());
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		
-		else if (e.getSource() == FG1) {
+		else if (e.getSource() == allPianoKeys.get("F# Gb1").getButton()) {
 			try {
-				AudioInputStream aIS = AudioSystem.getAudioInputStream(new File("C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\(7) f-3.wav"));
-				Clip clip = AudioSystem.getClip();
-				clip.open(aIS);
-				clip.start();
+				AudioInputStream aIS = makeAudio(allPianoKeys.get("F# Gb1").getAudioPath());
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		
-		else if (e.getSource() == GA1) {
+		else if (e.getSource() == allPianoKeys.get("G# Ab1").getButton()) {
 			try {
-				AudioInputStream aIS = AudioSystem.getAudioInputStream(new File("C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\(9) g-3.wav"));
-				Clip clip = AudioSystem.getClip();
-				clip.open(aIS);
-				clip.start();
+				AudioInputStream aIS = makeAudio(allPianoKeys.get("G# Ab1").getAudioPath());
 			}
-			 catch (Exception e1) {
-				// TODO Auto-generated catch block
+			 catch (Exception e1) {			
 				e1.printStackTrace();
 			}
 		}
 		
-		else if (e.getSource() == AB1) {
+		else if (e.getSource() == allPianoKeys.get("A# Bb1").getButton()) {
 			try {
-				AudioInputStream aIS = AudioSystem.getAudioInputStream(new File("C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\(23) a-4.wav"));
-				Clip clip = AudioSystem.getClip();
-				clip.open(aIS);
-				clip.start();
+				AudioInputStream aIS = makeAudio(allPianoKeys.get("A# Bb1").getAudioPath());
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		
-		else if (e.getSource() == CD2) {
+		else if (e.getSource() == allPianoKeys.get("C# Db2").getButton()) {
 			try {
-				AudioInputStream aIS = AudioSystem.getAudioInputStream(new File("C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\(14) c-4.wav"));
-				Clip clip = AudioSystem.getClip();
-				clip.open(aIS);
-				clip.start();
+				AudioInputStream aIS = makeAudio(allPianoKeys.get("C# Db2").getAudioPath());
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		
-		else if (e.getSource() == DE2) {
+		else if (e.getSource() == allPianoKeys.get("D# Eb2").getButton()) {
 			try {
-				AudioInputStream aIS = AudioSystem.getAudioInputStream(new File("C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\(16) d-4.wav"));
-				Clip clip = AudioSystem.getClip();
-				clip.open(aIS);
-				clip.start();
+				AudioInputStream aIS = makeAudio(allPianoKeys.get("D# Eb2").getAudioPath());
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		
-		else if (e.getSource() == FG2) {
+		else if (e.getSource() == allPianoKeys.get("F# Gb2").getButton()) {
 			try {
-				AudioInputStream aIS = AudioSystem.getAudioInputStream(new File("C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\(19) f-4.wav"));
-				Clip clip = AudioSystem.getClip();
-				clip.open(aIS);
-				clip.start();
+				AudioInputStream aIS = makeAudio(allPianoKeys.get("F# Gb2").getAudioPath());
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		
-		else if (e.getSource() == GA2) {
+		else if (e.getSource() == allPianoKeys.get("G# Ab2").getButton()) {
 			try {
-				AudioInputStream aIS = AudioSystem.getAudioInputStream(new File("C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\(21) g-4.wav"));
-				Clip clip = AudioSystem.getClip();
-				clip.open(aIS);
-				clip.start();
+				AudioInputStream aIS = makeAudio(allPianoKeys.get("G# Ab2").getAudioPath());
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		
-		else if (e.getSource() == AB2) {
+		else if (e.getSource() == allPianoKeys.get("A# Bb2").getButton()) {
 			try {
-				AudioInputStream aIS = AudioSystem.getAudioInputStream(new File("C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\a-5.wav"));
-				Clip clip = AudioSystem.getClip();
-				clip.open(aIS);
-				clip.start();
+				AudioInputStream aIS = makeAudio(allPianoKeys.get("A# Bb2").getAudioPath());
 			}
 			 catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-		}
-		
-		
-			
-			
+		}		
 	}
-		// TODO Auto-generated method stub
 }
 
