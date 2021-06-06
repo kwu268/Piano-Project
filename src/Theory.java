@@ -1,4 +1,4 @@
-
+	
 public class Theory {
 	private static final String[][] String = null;
 	private String[] Sharpnotes = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
