@@ -6,9 +6,7 @@ import java.util.HashMap;
 import javax.swing.JButton;
 
 public class GFlatMajor implements Scale {
-	
 	private static JButton[] buttons = new JButton[8];
-
 	private static String[] scaleKeys = {"F# Gb1", "G# Ab1", "A# Bb1", "B1", "C# Db2", "D# Eb2", "F2", "F# Gb2"};
 
 	public void getCurrentNote(HashMap<String,PianoNote> allPianoKeys, int note, String currentPianoKey) {
@@ -21,7 +19,7 @@ public class GFlatMajor implements Scale {
 		}
 	}
 
-	public void Highlight() {
+	public void highlightButtons() {
 		for (int i =0; i < 8; i++) {			
 			buttons[i].setBackground(Color.pink);
 		}	
@@ -30,7 +28,7 @@ public class GFlatMajor implements Scale {
 	@Override
 	public JButton[] setScale(HashMap<String,PianoNote> allPianoKeys) {
 		getNotes(allPianoKeys);
-		Highlight();
+		highlightButtons();
 		return buttons;
 	}
 }

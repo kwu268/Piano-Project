@@ -14,7 +14,7 @@ public interface Scale {
 	
 	public void getNotes(HashMap<String,PianoNote> test);
 	
-	public void Highlight();
+	public void highlightButtons();
 	
 	public JButton[] setScale(HashMap<String,PianoNote> allPianoKeys);
 
