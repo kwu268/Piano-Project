@@ -5,14 +5,17 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+
 public interface Scale {
 	
 	String[] scaleKeys = new String[8];
 	
-	public void getNotes(HashMap<String,JButton> test);
+	public void getCurrentNote(HashMap<String,PianoNote> allPianoKeys, int note, String currentPianoKey);
 	
-	public void Highlight();
+	public void getNotes(HashMap<String,PianoNote> test);
 	
-	public JButton[] setScale(HashMap<String,JButton> allPianoKeys);
+	public void highlightButtons();
+	
+	public JButton[] setScale(HashMap<String,PianoNote> allPianoKeys);
 
 }

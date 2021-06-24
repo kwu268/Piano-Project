@@ -1,92 +1,33 @@
 package MajorScales;
 import java.awt.Color;
+import java.util.HashMap;
 
 import javax.swing.JButton;
 
-public class FSharpMajor implements Scale{
+public class FSharpMajor implements Scale{	
+	private static JButton[] buttons = new JButton[8];		
+	private static String[] scaleKeys = {"F# Gb1", "G# Ab1", "A# Bb1", "B1", "C# Db2", "D# Eb2", "F2", "F# Gb2"};
 	
-private static JButton[] buttons = new JButton[8];
-
-	
-	public void getNotes(JButton[] test) {
-		int note = 0;
-		for (int parse = 0; parse < test.length; parse++) {
-			if (note > 8) break;
-			if (note == 0) {
-				if (test[parse].getText().equals("F#/Gb")) {
-					buttons[note] = test[parse];
-					note++;
-					System.out.println(test[parse].getText());
-				}
-			}
-			else if (note == 1) {
-				if (test[parse].getText().equals("G#/Ab")) {
-					buttons[note] = test[parse];
-					note++;
-					System.out.println(test[parse].getText());
-				}
-			}
-			else if (note == 2)	{
-				if (test[parse].getText().equals("A#/Bb")) {
-					buttons[note] = test[parse];
-					note++;
-					System.out.println(test[parse].getText());
-				}
-			}
-			else if (note == 3)	{
-				if (test[parse].getText().equals("B1")) {
-					buttons[note] = test[parse];
-					note++;
-					System.out.println(test[parse].getText());
-				}
-			}
-			else if (note == 4) {
-				if (test[parse].getText().equals("C#/Db2")) {
-					buttons[note] = test[parse];
-					note++;
-					System.out.println(test[parse].getText());
-				}
-			}
-			else if (note == 5) {
-				if (test[parse].getText().equals("D#/Eb2")) {
-					buttons[note] = test[parse];
-					note++;
-					System.out.println(test[parse].getText());
-				}
-			}
-			else if (note == 6) {
-				if (test[parse].getText().equals("F2")) {
-					buttons[note] = test[parse];
-					note++;
-					System.out.println(test[parse].getText());
-				}
-			}
-			else if (note == 7) {
-				if (test[parse].getText().equals("F#/Gb2")) {
-					buttons[note] = test[parse];
-					note++;
-					System.out.println(test[parse].getText());
-				}
-			}
-		}
-		
+	public void getCurrentNote(HashMap<String,PianoNote> allPianoKeys, int note, String currentPianoKey) {
+		buttons[note] = allPianoKeys.get(currentPianoKey).getButton();
 	}
 
-	@Override
-	public void Highlight() {
-		for (int i =0; i < 8; i++) {
-			
+	public void getNotes(HashMap<String,PianoNote> allPianoKeys) {
+		for (int i = 0; i < scaleKeys.length; i++) {	
+			getCurrentNote(allPianoKeys, i, scaleKeys[i]);				
+		}
+	}
+
+	public void highlightButtons() {
+		for (int i =0; i < 8; i++) {			
 			buttons[i].setBackground(Color.pink);
-		}
-		
+		}	
 	}
 
 	@Override
-	public JButton[] setScale(JButton[] test) {
-		getNotes(test);
-		Highlight();
+	public JButton[] setScale(HashMap<String,PianoNote> allPianoKeys) {
+		getNotes(allPianoKeys);
+		highlightButtons();
 		return buttons;
 	}
-	
-
 }
