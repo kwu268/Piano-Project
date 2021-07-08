@@ -33,10 +33,12 @@ import javax.swing.JPanel;
 //make Factory 
 //Change Class Names to Capitalized
 //Clean up clear Button code
-
-//TODO:
 //Clean up unused variables and comments
 //make note class containing audio and bounds and Jbutton properties 
+
+//TODO:
+//make one Scale class to replace each Major scale class since they use the same functions 
+
 public class Piano implements ActionListener {
 	//Boundary numbers white keys
 	private final int OFFSET = 40;
