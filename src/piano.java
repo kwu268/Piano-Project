@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -49,8 +50,8 @@ public class Piano implements ActionListener {
 	//Boundary numbers black keys
 	private final int BLACK_KEY_HEIGHT = 192;
 	private final int BLACK_KEY_Y =	41;
-	
-	private final String BASE_AUDIO_PATH = "C:\\Users\\me\\Desktop\\mp3 Notes\\saved\\";
+	private final String BASE_PATH = Paths.get(".").toAbsolutePath().normalize().toString();
+	private final String BASE_AUDIO_PATH = BASE_PATH + "\\audioNotes\\";
 	private final String[] KEYS = {"C", "G", "D", "A", "E", "B", "F#", "C#", "F", "Bb", "Eb", "Ab", "Db", "Gb", "Cb"};
 	private final String[] WHITE_KEYS = {"C1", "D1", "E1", "F1", "G1", "A1", "B1", "C2", "D2", "E2", "F2", "G2", "A2", "B2" };
 	private final String[] BLACK_KEYS = {"C# Db1","D# Eb1", "F# Gb1", "G# Ab1", "A# Bb1", "C# Db2", "D# Eb2", "F# Gb2", "G# Ab2", "A# Bb2" };
@@ -116,6 +117,7 @@ public class Piano implements ActionListener {
 	}
 	
 	private void initialize() {
+		System.out.println(BASE_PATH);
 		frame = new JFrame();
 		frame.setBounds(100, 100, 1500, 550);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
